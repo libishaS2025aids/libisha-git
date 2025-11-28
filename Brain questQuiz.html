@@ -1,0 +1,260 @@
+<html>
+<head>
+    <title>BrainQuest - Quiz  website</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 480px;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        h1 {
+            text-align: center;
+            color: #004aad;
+            margin-bottom: 15px;
+            font-size: 32px;
+        }
+
+        h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        select, button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        select {
+            border: 2px solid #004aad;
+        }
+
+        button {
+            background: #004aad;
+            color: white;
+            border: none;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #00347a;
+            transform: scale(1.05);
+        }
+
+        .option-btn {
+            padding: 12px;
+            width: 100%;
+            margin: 10px 0;
+            background: #e9efff;
+            border: 2px solid #bcd0ff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 16px;
+        }
+
+        .option-btn:hover {
+            background: #d4e1ff;
+            transform: scale(1.03);
+        }
+
+        .correct {
+            background: #b8f5c5 !important;
+            border-color: #41c368 !important;
+        }
+
+        .wrong {
+            background: #ffb8b8 !important;
+            border-color: #ff4d4d !important;
+        }
+
+        #next-btn {
+            display: none;
+        }
+
+        #result-section h2 {
+            text-align: center;
+            color: #004aad;
+        }
+
+        #score {
+            color: #1e7f00;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>🧠 BrainQuest</h1>
+    <div id="topic-section">
+        <h3>Select Topic</h3>
+        <select id="topic">
+            <option value="" disabled selected>Select a topic</option>
+            <option value="gk">General Knowledge</option>
+            <option value="science">Science</option>
+            <option value="math">Math</option>
+        </select>
+
+        <button onclick="startQuiz()">Start Quiz</button>
+    </div>
+
+        <div id="quiz-section" style="display:none;">
+        <h3 id="question-text"></h3>
+
+        <div id="options"></div>
+
+        <button id="next-btn" onclick="nextQuestion()">Next</button>
+    </div>
+    <div id="result-section" style="display:none;">
+        <h2>Your Score: <span id="score"></span></h2>
+        <button onclick="location.reload()">Restart Quiz</button>
+    </div>
+
+</div>
+
+<script>
+    const quizData = {
+
+                gk: [
+            { question: "What is the capital of India?", options: ["Delhi", "Mumbai", "Chennai", "Kolkata"], answer: "Delhi" },
+            { question: "National bird of India?", options: ["Peacock", "Sparrow", "Parrot", "Eagle"], answer: "Peacock" },
+            { question: "Which is the national flower?", options: ["Rose", "Lotus", "Jasmine", "Lily"], answer: "Lotus" },
+            { question: "Largest country in the world?", options: ["Russia", "USA", "India", "China"], answer: "Russia" },
+            { question: "Who wrote 'Discovery of India'?", options: ["Jawaharlal Nehru", "Gandhi", "Tagore", "Ambedkar"], answer: "Jawaharlal Nehru" },
+            { question: "Fastest land animal?", options: ["Tiger", "Lion", "Cheetah", "Horse"], answer: "Cheetah" },
+            { question: "Smallest planet?", options: ["Earth", "Mars", "Mercury", "Venus"], answer: "Mercury" },
+            { question: "Which is the largest ocean?", options: ["Pacific", "Atlantic", "Indian", "Arctic"], answer: "Pacific" },
+            { question: "Taj Mahal is in?", options: ["Agra", "Delhi", "Jaipur", "Kolkata"], answer: "Agra" },
+            { question: "National game of India?", options: ["Hockey", "Cricket", "Football", "Tennis"], answer: "Hockey" }
+        ],
+
+                science: [
+            { question: "H2O is?", options: ["Water", "Oxygen", "Hydrogen", "Helium"], answer: "Water" },
+            { question: "Earth revolves around?", options: ["Moon", "Mars", "Sun", "Venus"], answer: "Sun" },
+            { question: "Which gas do plants release?", options: ["CO2", "Oxygen", "Nitrogen", "Helium"], answer: "Oxygen" },
+            { question: "Human heart has how many chambers?", options: ["2", "3", "4", "5"], answer: "4" },
+            { question: "Sun is a?", options: ["Planet", "Star", "Comet", "Asteroid"], answer: "Star" },
+            { question: "Which organ pumps blood?", options: ["Heart", "Lungs", "Brain", "Kidney"], answer: "Heart" },
+            { question: "Boiling point of water?", options: ["50°C", "100°C", "150°C", "200°C"], answer: "100°C" },
+            { question: "Largest organ of body?", options: ["Heart", "Skin", "Brain", "Liver"], answer: "Skin" },
+            { question: "Which planet is red planet?", options: ["Earth", "Mars", "Jupiter", "Venus"], answer: "Mars" },
+            { question: "Plants make food by?", options: ["Respiration", "Photosynthesis", "Digestion", "Evaporation"], answer: "Photosynthesis" }
+        ],
+
+              math: [
+            { question: "12 × 12 = ?", options: ["132", "144", "124", "120"], answer: "144" },
+            { question: "Square root of 81?", options: ["7", "8", "9", "10"], answer: "9" },
+            { question: "15 + 25 = ?", options: ["30", "35", "40", "45"], answer: "40" },
+            { question: "100 ÷ 10 = ?", options: ["5", "10", "15", "20"], answer: "10" },
+            { question: "What is 9 × 6?", options: ["54", "64", "56", "48"], answer: "54" },
+            { question: "What is 50 - 17?", options: ["33", "37", "43", "27"], answer: "33" },
+            { question: "What is 7²?", options: ["42", "14", "49", "21"], answer: "49" },
+            { question: "What is 3³?", options: ["6", "9", "27", "18"], answer: "27" },
+            { question: "What is 8 × 7?", options: ["54", "48", "56", "63"], answer: "56" },
+            { question: "What is 90 ÷ 9?", options: ["11", "9", "10", "8"], answer: "10" }
+        ]
+    };
+
+
+    let currentTopic = "";
+    let currentIndex = 0;
+    let score = 0;
+
+    function startQuiz() {
+        let topic = document.getElementById("topic").value;
+        if (!topic) { alert("Please select a topic!"); return; }
+
+        currentTopic = topic;
+        document.getElementById("topic-section").style.display = "none";
+        document.getElementById("quiz-section").style.display = "block";
+
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        let q = quizData[currentTopic][currentIndex];
+        document.getElementById("question-text").innerText = q.question;
+
+        let optionsDiv = document.getElementById("options");
+        optionsDiv.innerHTML = "";
+        document.getElementById("next-btn").style.display = "none";
+
+        q.options.forEach(option => {
+            let btn = document.createElement("button");
+            btn.classList.add("option-btn");
+            btn.innerText = option;
+
+            btn.onclick = function () {
+                let buttons = document.querySelectorAll(".option-btn");
+                buttons.forEach(b => b.style.pointerEvents = "none");
+
+                if (option === q.answer) {
+                    btn.classList.add("correct");
+                    score++;
+                } else {
+                    btn.classList.add("wrong");
+                    buttons.forEach(b => {
+                        if (b.innerText === q.answer) b.classList.add("correct");
+                    });
+                }
+
+                document.getElementById("next-btn").style.display = "block";
+            };
+
+            optionsDiv.appendChild(btn);
+        });
+    }
+
+    function nextQuestion() {
+        currentIndex++;
+
+        if (currentIndex < quizData[currentTopic].length) {
+            loadQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        document.getElementById("quiz-section").style.display = "none";
+        document.getElementById("result-section").style.display = "block";
+
+        document.getElementById("score").innerText =
+            score + " / " + quizData[currentTopic].length;
+    }
+</script>
+
+</body>
+</html>
